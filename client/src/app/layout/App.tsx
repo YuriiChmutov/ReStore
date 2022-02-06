@@ -1,40 +1,37 @@
-import { Fragment, useEffect, useState } from "react";
+import { useState } from "react";
 import Catalog from "../../features/catalog/Catalog";
-import { Product } from "../models/products";
 import { Header } from "./Header";
-import { Container, CssBaseline } from "@mui/material";
+import {
+    Container,
+    CssBaseline,
+    createTheme,
+    ThemeProvider,
+} from "@mui/material";
 
 function App() {
-    const [products, setProducts] = useState<Product[]>([]);
-
-    useEffect(() => {
-        fetch("http://localhost:5000/api/Products")
-            .then((response) => response.json())
-            .then((data) => setProducts(data));
-    }, []);
-
-    const addProduct = () => {
-        setProducts((prevState) => [
-            ...prevState,
-            {
-                id: prevState.length + 101,
-                name: "product3",
-                price: 300,
-                description: "la-la-la",
-                brand: "test-brand",
-                pictureUrl: "http://picsum.photos/200",
+    const [darkMode, setDarkMode] = useState(false);
+    const palletType = darkMode ? "dark" : "light";
+    const theme = createTheme({
+        palette: {
+            mode: palletType,
+            background: {
+                default: palletType === "light" ? "#eaeaea" : "#121212",
             },
-        ]);
+        },
+    });
+
+    const handleChangeMode = () => {
+        setDarkMode(!darkMode);
     };
 
     return (
-        <Fragment>
+        <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Header />
+            <Header onChangeMode={handleChangeMode} />
             <Container>
-                <Catalog products={products} addProduct={addProduct} />
+                <Catalog />
             </Container>
-        </Fragment>
+        </ThemeProvider>
     );
 }
 
